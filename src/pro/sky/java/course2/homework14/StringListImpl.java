@@ -1,5 +1,6 @@
 package pro.sky.java.course2.homework14;
 
+import pro.sky.java.course2.homework14.exceptions.ArrayIsFullException;
 import pro.sky.java.course2.homework14.exceptions.IncorrectIndexException;
 import pro.sky.java.course2.homework14.exceptions.ItemDoesNotExistException;
 import pro.sky.java.course2.homework14.exceptions.ItemIsNullException;
@@ -18,6 +19,7 @@ public class StringListImpl implements StringList{
     @Override
     public String add(String item) {
         checkItemIsNotNull(item);
+        checkArrayIsNotFull(array);
         array[size++] = item;
         return item;
     }
@@ -139,6 +141,12 @@ public class StringListImpl implements StringList{
     private void checkItemExists(String item) {
         if (!contains(item)) {
             throw new ItemDoesNotExistException();
+        }
+    }
+
+    private void checkArrayIsNotFull(String[] array) {
+        if (size >= array.length) {
+            throw new ArrayIsFullException();
         }
     }
 }
