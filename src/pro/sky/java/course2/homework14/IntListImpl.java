@@ -1,6 +1,5 @@
 package pro.sky.java.course2.homework14;
 
-import pro.sky.java.course2.homework14.exceptions.ArrayIsFullException;
 import pro.sky.java.course2.homework14.exceptions.IncorrectIndexException;
 import pro.sky.java.course2.homework14.exceptions.ItemDoesNotExistException;
 import pro.sky.java.course2.homework14.exceptions.ItemIsNullException;
@@ -49,6 +48,7 @@ public class IntListImpl implements IntList{
         checkItemExists(item);
         checkIndex(indexOf(item));
         System.arraycopy(intArray, indexOf(item) + 1, intArray, indexOf(item), intArray.length - 1);
+        doesArrayNeedToBeResized(intArray);
         intArray[size--] = 0;
         return item;
     }
@@ -58,13 +58,14 @@ public class IntListImpl implements IntList{
         checkIndex(index);
         Integer item = get(index);
         System.arraycopy(intArray, indexOf(item) + 1, intArray, indexOf(item), intArray.length - 1);
+        doesArrayNeedToBeResized(intArray);
         intArray[size--] = 0;
         return item;
     }
 
     @Override
     public boolean contains(Integer item) {
-        sortInsertion(intArray);
+        quickSort(intArray, 0, intArray.length - 1);
         return binarySearch(intArray, item);
     }
 
@@ -148,13 +149,19 @@ public class IntListImpl implements IntList{
         }
     }
 
-    private void checkArrayIsNotFull(Integer[] IntArray) {
-        if (size >= IntArray.length) {
-            throw new ArrayIsFullException();
+    private void checkArrayIsNotFull(Integer[] intArray) {
+        if (size >= intArray.length) {
+            intArray = grow();
         }
     }
 
-    // Самая быстрая сортировка
+    private void doesArrayNeedToBeResized(Integer[] intArray) {
+        if (intArray[intArray.length / 2] == null) {
+            intArray = resize();
+        }
+    }
+
+    // Самая быстрая сортировка из урока 2.15
     private static void sortInsertion(Integer[] intArray) {
         for (int i = 1; i < intArray.length; i++) {
             Integer temp = intArray[i];
@@ -167,6 +174,39 @@ public class IntListImpl implements IntList{
         }
     }
 
+    // Рекурсивная сортировка
+    public static void quickSort(Integer[] intArray, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(intArray, begin, end);
+
+            quickSort(intArray, begin, partitionIndex - 1);
+            quickSort(intArray, partitionIndex + 1, end);
+        }
+    }
+
+    private static int partition(Integer[] intArray, int begin, int end) {
+        int pivot = intArray[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (intArray[j] <= pivot) {
+                i++;
+
+                swapElements(intArray, i, j);
+            }
+        }
+
+        swapElements(intArray, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] intArray, int left, int right) {
+        int temp = intArray[left];
+        intArray[left] = intArray[right];
+        intArray[right] = temp;
+    }
+
+    // Бинарный поиск
     public static boolean binarySearch(Integer[] intArray, Integer item) {
         int min = 0;
         int max = intArray.length - 1;
@@ -182,5 +222,13 @@ public class IntListImpl implements IntList{
             }
         }
         return false;
+    }
+
+    private Integer[] grow() {
+        return Arrays.copyOf(intArray, intArray.length * 3 / 2);
+    }
+
+    private Integer[] resize() {
+        return Arrays.copyOf(intArray, intArray.length / 3 * 2);
     }
 }
