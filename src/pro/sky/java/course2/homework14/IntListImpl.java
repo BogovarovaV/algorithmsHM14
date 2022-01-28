@@ -175,10 +175,10 @@ public class IntListImpl implements IntList{
     }
 
     // Рекурсивная сортировка
-    public static void quickSort(Integer[] intArray, int begin, int end) {
+    public void quickSort(Integer[] intArray, int begin, int end) {
+        end = size - 1;
         if (begin < end) {
             int partitionIndex = partition(intArray, begin, end);
-
             quickSort(intArray, begin, partitionIndex - 1);
             quickSort(intArray, partitionIndex + 1, end);
         }
