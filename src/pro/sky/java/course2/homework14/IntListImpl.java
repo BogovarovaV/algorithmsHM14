@@ -151,13 +151,13 @@ public class IntListImpl implements IntList{
 
     private void checkArrayIsNotFull(Integer[] intArray) {
         if (size >= intArray.length) {
-            intArray = grow();
+            this.intArray = grow();
         }
     }
 
     private void doesArrayNeedToBeResized(Integer[] intArray) {
         if (intArray[intArray.length / 2] == null) {
-            intArray = resize();
+            this.intArray = resize();
         }
     }
 
